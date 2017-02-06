@@ -65,17 +65,17 @@ class VAE:
 
     def check(self):
         img = self.sess.run([self.dh.valid_x])[0]
-        plt.figure()
-        plt.subplot(1, 2, 1)
-        plt.imshow(img[0, :, :, 0])
+        # plt.figure()
+        # plt.subplot(1, 2, 1)
+        # plt.imshow(img[0, :, :, 0])
 
         img = tf.reshape(img, (tf.shape(img)[0], -1))
         img = img.eval()
         img = self.x_reconstructed.eval(feed_dict={self.x_input: img})
         print(img.shape)
-        plt.subplot(1, 2, 2)
-        plt.imshow(np.reshape(img, [-1, 75, 40])[0])
-        plt.show()
+        # plt.subplot(1, 2, 2)
+        # plt.imshow(np.reshape(img, [-1, 75, 40])[0])
+        # plt.show()
 
     @staticmethod
     def sample_Gaussian(mu, log_sigma):

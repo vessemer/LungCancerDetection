@@ -1,7 +1,7 @@
 PATH = {
-    'DATA': '/home/vess/Projects/ML/Lung/data/whole/TbDispensary',
-    'TRAIN': '/home/vess/Projects/ML/Lung/data/whole/TbDispensary/lungs_train.tfrecords',
-    'VALID': '/home/vess/Projects/ML/Lung/data/whole/TbDispensary/lungs_valid.tfrecords'
+    'DATA': '/home/a.dobrenkii/Projects/liberaCAD/data/TbDispensary',
+    'TRAIN': '/home/a.dobrenkii/Projects/liberaCAD/data/TbDispensary/lungs_train.tfrecords',
+    'VALID': '/home/a.dobrenkii/Projects/liberaCAD/data/TbDispensary/lungs_valid.tfrecords'
 }
 
 

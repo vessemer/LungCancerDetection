@@ -1,8 +1,8 @@
 import tensorflow as tf
 import random
 
-from IPython.support.dcmx import DICOMReader
-from TFModel.config import *
+from support.dcmx import DICOMReader
+from config import *
 
 
 class DataHandler:
@@ -96,4 +96,3 @@ class DataHandler:
     def close_all_queues(self):
         self.coord.request_stop()
         self.coord.join(self.threads)
-
