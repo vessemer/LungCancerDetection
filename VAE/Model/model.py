@@ -1,10 +1,10 @@
 import numpy as np
 
-from TFModel.input import DataHandler
+from input import DataHandler
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from TFModel.layers import Dense, Conv
-from TFModel.losses import Losses
+from layers import Dense, Conv
+from losses import Losses
 
 
 class VAE:
