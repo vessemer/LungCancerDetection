@@ -1,17 +1,28 @@
 import dicom
 from numpy import *
+import SimpleITK as sitk
 import os
 
 
-def read_ct_scan(folder_name):
+def read_ct_scan(path, verbose=False):
     # type: (object) -> object
     # Read the slices from the dicom file
     slices = []
-    for filename in os.listdir(folder_name):
+    try:
+        files = os.listdir(path)
+    except:
         try:
-            slices.append(dicom.read_file(os.path.join(folder_name, filename)))
+            return sitk.ReadImage(path)
+        except:
+            if verbose:
+                print('Neither a DICOM nor a MHD file: %s' % os.path.basename(path))
+
+    for filename in files:
+        try:
+            slices.append(dicom.read_file(os.path.join(path, filename)))
         except dicom.filereader.InvalidDicomError:
-            print('Not a DICOM file: %s' % filename)
+            if verbose:
+                print('Neither a DICOM nor a MHD file: %s' % filename)
 
     slices.sort(key=lambda x: int(x.InstanceNumber))
 
@@ -34,7 +45,10 @@ def extract_array(ct_scan):
 
 
 def get_pixels_hu(slices):
-    image = stack([s.pixel_array for s in slices])
+    try:
+        image = stack([s.pixel_array for s in slices])
+    except AttributeError:
+        return sitk.GetArrayFromImage(slices)
     # Convert to int16 (from sometimes int16),
     # should be possible as values should always be low enough (<32k)
     image = image.astype(int16)

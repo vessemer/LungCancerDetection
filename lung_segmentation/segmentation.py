@@ -3,11 +3,12 @@ Lung segmentation was taken from
 https://www.kaggle.com/gzuidhof/data-science-bowl-2017/full-preprocessing-tutorial
 """
 from numpy import *
-from skimage import measure, morphology
+from skimage import measure, morphology, segmentation
 from skimage.segmentation import clear_border
 from skimage.measure import label,regionprops, perimeter
 from skimage.morphology import ball, disk, dilation, binary_erosion, \
     remove_small_objects, erosion, closing, reconstruction, binary_closing
+import scipy.ndimage as ndimage
 from skimage.filters import roberts, sobel
 from scipy import ndimage as ndi
 
@@ -92,3 +93,79 @@ def get_lungs_mask(im):
 
 def segment_lung_from_ct_scan(ct_scan):
     return asarray([get_lungs_mask(slice) for slice in ct_scan])
+
+
+
+"""
+Lung segmentation was taken from
+https://www.kaggle.com/ankasor/data-science-bowl-2017/improved-lung-segmentation-using-watershed/discussion
+"""
+
+
+def generate_markers(image):
+    # Creation of the internal Marker
+    marker_internal = image < -400
+    img_shape = image.shape
+    marker_internal = segmentation.clear_border(marker_internal)
+    marker_internal_labels = measure.label(marker_internal)
+    areas = [r.area for r in measure.regionprops(marker_internal_labels)]
+    areas.sort()
+    if len(areas) > 2:
+        for region in measure.regionprops(marker_internal_labels):
+            if region.area < areas[-2]:
+                for coordinates in region.coords:
+                    marker_internal_labels[coordinates[0], coordinates[1]] = 0
+    marker_internal = marker_internal_labels > 0
+    # Creation of the external Marker
+    external_a = ndimage.binary_dilation(marker_internal, iterations=10)
+    external_b = ndimage.binary_dilation(marker_internal, iterations=55)
+    marker_external = external_b ^ external_a
+    # Creation of the Watershed Marker matrix
+    marker_watershed = zeros(img_shape, dtype=int)
+    marker_watershed += marker_internal * 255
+    marker_watershed += marker_external * 128
+
+    return marker_internal, marker_external, marker_watershed
+
+
+def exclude_lungs(image):
+    # Creation of the markers as shown above:
+    marker_internal, marker_external, marker_watershed = generate_markers(image)
+    img_shape = image.shape
+
+    # Creation of the Sobel-Gradient
+    sobel_filtered_dx = ndimage.sobel(image, 1)
+    sobel_filtered_dy = ndimage.sobel(image, 0)
+    sobel_gradient = hypot(sobel_filtered_dx, sobel_filtered_dy)
+    sobel_gradient *= 255.0 / sobel_gradient.max()
+
+    # Watershed algorithm
+    watershed = morphology.watershed(sobel_gradient, marker_watershed)
+
+    # Reducing the image created by the Watershed algorithm to its outline
+    outline = ndimage.morphological_gradient(watershed, size=(3, 3))
+    outline = outline.astype(bool)
+
+    # Performing Black-Tophat Morphology for reinclusion
+    # Creation of the disk-kernel and increasing its size a bit
+    blackhat_struct = [[0, 0, 1, 1, 1, 0, 0],
+                       [0, 1, 1, 1, 1, 1, 0],
+                       [1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1],
+                       [1, 1, 1, 1, 1, 1, 1],
+                       [0, 1, 1, 1, 1, 1, 0],
+                       [0, 0, 1, 1, 1, 0, 0]]
+    blackhat_struct = ndimage.iterate_structure(blackhat_struct, 8)
+    # Perform the Black-Hat
+    outline += ndimage.black_tophat(outline, structure=blackhat_struct)
+
+    # Use the internal marker and the Outline that was just created to generate the lungfilter
+    lungfilter = bitwise_or(marker_internal, outline)
+    # Close holes in the lungfilter
+    # fill_holes is not used here, since in some slices the heart would be reincluded by accident
+    lungfilter = ndimage.morphology.binary_closing(lungfilter, structure=ones((5, 5)), iterations=3)
+
+    # Apply the lungfilter (note the filtered areas being assigned -2000 HU)
+    segmented = where(lungfilter == 1, image, -2000 * ones(img_shape))
+
+    return segmented, lungfilter, sobel_gradient
