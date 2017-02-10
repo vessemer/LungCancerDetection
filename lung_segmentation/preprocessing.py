@@ -3,7 +3,7 @@ from numpy import round
 import scipy
 
 
-def resample(image, scan, new_spacing=[2.5, 0.8, 0.8]):
+def resample(image, scan, new_spacing=[0.7, 0.6, 0.6]):
     # Determine current pixel spacing
     try:
         spacing = array([scan[0].SliceThickness] + scan[0].PixelSpacing, dtype=float32)

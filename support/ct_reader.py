@@ -8,33 +8,33 @@ def read_ct_scan(path, verbose=False):
     # type: (object) -> object
     # Read the slices from the dicom file
     slices = []
-    try:
-        files = os.listdir(path)
-    except:
+    if os.path.isfile(path):
         try:
             return sitk.ReadImage(path)
         except:
             if verbose:
                 print('Neither a DICOM nor a MHD file: %s' % os.path.basename(path))
 
-    for filename in files:
+    if os.path.isdir(path):
+        files = os.listdir(path)
+        for filename in files:
+            try:
+                slices.append(dicom.read_file(os.path.join(path, filename)))
+            except dicom.filereader.InvalidDicomError:
+                if verbose:
+                    print('Neither a DICOM nor a MHD file: %s' % filename)
+
+        slices.sort(key=lambda x: int(x.InstanceNumber))
+
         try:
-            slices.append(dicom.read_file(os.path.join(path, filename)))
-        except dicom.filereader.InvalidDicomError:
-            if verbose:
-                print('Neither a DICOM nor a MHD file: %s' % filename)
+            slice_thickness = abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
+        except AttributeError:
+            slice_thickness = abs(slices[0].SliceLocation - slices[1].SliceLocation)
 
-    slices.sort(key=lambda x: int(x.InstanceNumber))
+        for s in slices:
+            s.SliceThickness = slice_thickness
 
-    try:
-        slice_thickness = abs(slices[0].ImagePositionPatient[2] - slices[1].ImagePositionPatient[2])
-    except AttributeError:
-        slice_thickness = abs(slices[0].SliceLocation - slices[1].SliceLocation)
-
-    for s in slices:
-        s.SliceThickness = slice_thickness
-
-    return slices
+        return slices
 
 
 def extract_array(ct_scan):
