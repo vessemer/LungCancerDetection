@@ -1,5 +1,6 @@
 from numpy import *
 from numpy import round
+from scipy.misc import imresize
 import scipy
 
 

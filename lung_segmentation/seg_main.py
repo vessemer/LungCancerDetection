@@ -25,18 +25,18 @@ SPACING = array([.7, .6, .6])
 
 
 def is_visited(path):
-    processed = listdir(join(PATH['LUNA_OUT'], 'SOBEL_IMG'))
-    name = basename(path).split('.mhd')[0]
-    for patient in processed:
-        if name.lower() in patient.lower():
-            return True
-
-    try:
-        for ct_file in listdir(path):
-            if '.npy' in ct_file.lower():
+    if os.path.isfile(path):
+        processed = listdir(join(PATH['LUNA_OUT'], 'SOBEL_IMG'))
+        name = basename(path).split('.mhd')[0]
+        for patient in processed:
+            if name.lower() in patient.lower():
                 return True
-    except:
-        return False
+    else:
+        processed = listdir(join(PATH['DATA_OUT'], 'SOBEL_IMG'))
+        name = basename(path)
+        for patient in processed:
+            if name.lower() in patient.lower():
+                return True
     return False
 
 
@@ -104,7 +104,7 @@ def crop_and_rotate(segmenteds, left, right):
 
 def evaluate_masks(patients, anotations=None):
 
-    for i, patient in enumerate(tqdm(patients)):
+    for i, patient in enumerate(patients):
 
         if is_visited(patient):
             continue
@@ -115,7 +115,6 @@ def evaluate_masks(patients, anotations=None):
 
         ct_scan_px = get_pixels_hu(ct_scan)
         ct_scan_px, spacing = resample(ct_scan_px, ct_scan, SPACING)
-
         ct_mask_F = segment_lung_mask(ct_scan_px, False)
         ct_mask_T = segment_lung_mask(ct_scan_px, True)
         ct_mask_diff = ct_mask_T - ct_mask_F
@@ -125,7 +124,6 @@ def evaluate_masks(patients, anotations=None):
                                          anotations,
                                          basename(patient).split('.mhd')[0],
                                          ct_mask_diff)
-            ct_mask_diff[ct_mask_diff > 1] = 2
 
         # start = time.time()
 
@@ -140,9 +138,9 @@ def evaluate_masks(patients, anotations=None):
         # print(end - start)
 
         for ct_slice in ct_excluded:
-            segmented.append(ct_slice[0].astype(int16))
+            segmented.append(ct_slice[0])
             lung_filter.append(ct_slice[1].astype(bool_))
-            sobel.append((ct_slice[2] * ct_slice[1]).astype(float16))
+            sobel.append(ct_slice[2] * ct_slice[1])
 
         lung_filter = asarray(lung_filter)
         left, right = separate_lungs3d(lung_filter)
@@ -152,22 +150,22 @@ def evaluate_masks(patients, anotations=None):
 
         # ct_mask = segment_lung_from_ct_scan(ct_scan)
         patient = basename(patient).split('.mhd')[0]
-        save(join(PATH['LUNA_OUT'], 'LUNGS_IMG', patient + 'lungs_left'), segmented_left)
-        save(join(PATH['LUNA_OUT'], 'LUNGS_IMG', patient + 'lungs_right'), segmented_right)
+        save(join(PATH['DATA_OUT'], 'LUNGS_IMG', patient + 'lungs_left'), segmented_left.astype(int16))
+        save(join(PATH['DATA_OUT'], 'LUNGS_IMG', patient + 'lungs_right'), segmented_right.astype(int16))
 
-        save(join(PATH['LUNA_OUT'], 'MASKS', patient + 'diff_left'), diff_left.astype(int8))
-        save(join(PATH['LUNA_OUT'], 'MASKS', patient + 'diff_right'), diff_right.astype(int8))
+        save(join(PATH['DATA_OUT'], 'MASKS', patient + 'diff_left'), diff_left.astype(int8))
+        save(join(PATH['DATA_OUT'], 'MASKS', patient + 'diff_right'), diff_right.astype(int8))
 
-        save(join(PATH['LUNA_OUT'], 'SOBEL_IMG', patient + 'sobel_left'), asarray(sobel_left))
-        save(join(PATH['LUNA_OUT'], 'SOBEL_IMG', patient + 'sobel_right'), asarray(sobel_right))
+        save(join(PATH['DATA_OUT'], 'SOBEL_IMG', patient + 'sobel_left'), asarray(sobel_left).astype(float16))
+        save(join(PATH['DATA_OUT'], 'SOBEL_IMG', patient + 'sobel_right'), asarray(sobel_right).astype(float16))
 
-        if len(vale):
+        if len(vale) and anotations is not None:
             vale = hstack([load(join(PATH['LUNA_OUT'], 'vals.npy')), asarray(vale)])
             save(join(PATH['LUNA_OUT'], 'vals'), vale)
 
 
-# patients = glob(join(PATH['DATA'], '*'))
-patients = glob(join(PATH['LUNA_DATA'], '*.mhd'))
-annotations = pd.read_csv(join(PATH['LUNA_CSV'], 'annotations.csv'))
-
-evaluate_masks(patients, annotations)
+patients = glob(join(PATH['DATA'], '*'))
+patients.sort()
+# patients = glob(join(PATH['LUNA_DATA'], '*.mhd'))
+# annotations = pd.read_csv(join(PATH['LUNA_CSV'], 'annotations.csv'))
+evaluate_masks(patients)

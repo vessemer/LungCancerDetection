@@ -25,12 +25,16 @@ def largest_label_volume(im, bg=-1):
         return None
 
 
-def segment_lung_mask(image, fill_lung_structures=True):
+def segment_lung_mask(image, fill_lung_structures=True, sobel=False):
     # not actually binary, but 1 and 2.
     # 0 is treated as background, which we do not want
     binary_image = array(image > -320, dtype=int8) + 1
     labels = measure.label(binary_image)
 
+    # Creation of the Sobel-Gradient
+    if sobel:
+        sobel_gradient = gradient(image)
+        sobel_gradient = linalg.norm(sobel_gradient, axis=0)
     # Pick the pixel in the very corner to determine which label is air.
     #   Improvement: Pick multiple background labels from around the patient
     #   More resistant to "trays" on which the patient lays cutting the air
@@ -61,7 +65,11 @@ def segment_lung_mask(image, fill_lung_structures=True):
     if l_max is not None:  # There are air pockets
         binary_image[labels != l_max] = 0
 
-    return binary_image
+    if sobel:
+        return binary_image.astype(bool_), \
+               (sobel_gradient * binary_image).astype(float16)
+
+    return binary_image.astype(bool_)
 
 
 """
