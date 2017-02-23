@@ -79,22 +79,22 @@ def dim_concentration(out=(1, 8, 64, 64),
     bn_axis = 1
     
 #   shape:  1, 8, 64, 64
-    x = Convolution3D(32, 3, 7, 7, subsample=(1, 1, 1),  border_mode='same')(img_input)
+    x = Convolution3D(16, 3, 7, 7, subsample=(1, 1, 1),  border_mode='same')(img_input)
     x = BatchNormalization(axis=bn_axis)(x)
     x = Activation('relu')(x)
     x = MaxPooling3D((1, 2, 2))(x)
     
 #   shape:  32, 8, 32, 32
-    x = conv_block(x, 3, [16, 16, 64])
-    x = identity_block(x, 3, [16, 16, 64])
-    x = identity_block(x, 3, [16, 16, 64])
+    x = conv_block(x, 3, [16, 16, 32])
+    x = identity_block(x, 3, [16, 16, 32])
+    x = identity_block(x, 3, [16, 16, 32])
     x = MaxPooling3D((1, 2, 2))(x)
 
 #   shape:  64, 8, 16, 16
-    x = conv_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
+    x = conv_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
     x = AveragePooling3D((1, 2, 2))(x)
 
 #   shape:  128, 8, 8, 8
@@ -106,16 +106,16 @@ def dim_concentration(out=(1, 8, 64, 64),
     
 
 #   shape:  64, 8, 16, 16
-    x = conv_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
-    x = identity_block(x, 3, [32, 32, 128])
+    x = conv_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
+    x = identity_block(x, 3, [32, 32, 64])
     x = UpSampling3D((1, 2, 2))(x)
 
 #   shape:  32, 8, 32, 32
-    x = conv_block(x, 3, [16, 16, 64])
-    x = identity_block(x, 3, [16, 16, 64])
-    x = identity_block(x, 3, [16, 16, 64])
+    x = conv_block(x, 3, [16, 16, 32])
+    x = identity_block(x, 3, [16, 16, 32])
+    x = identity_block(x, 3, [16, 16, 32])
     x = UpSampling3D((1, 2, 2))(x)
 
 #   shape:  1, 8, 64, 64
