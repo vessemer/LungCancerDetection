@@ -1,5 +1,6 @@
 from numpy import *
 from numpy import round
+from scipy.misc import imresize
 import scipy
 
 
@@ -8,11 +9,8 @@ def resample(image, scan, new_spacing=[0.7, 0.6, 0.6]):
     try:
         spacing = array([scan[0].SliceThickness] + scan[0].PixelSpacing, dtype=float32)
     except AttributeError:
-        try:
-            spacing = scan.GetSpacing()
-            spacing = array([spacing[-1], spacing[0], spacing[1]])
-        except:
-            spacing = scan
+        spacing = scan.GetSpacing()
+        spacing = array([spacing[-1], spacing[0], spacing[1]])
 
     resize_factor = spacing / new_spacing
     new_real_shape = image.shape * resize_factor

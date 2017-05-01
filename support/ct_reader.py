@@ -40,7 +40,7 @@ def read_ct_scan(path, verbose=False):
 def extract_array(ct_scan):
         heights = asarray([int(ct_slice.SliceLocation)for ct_slice in ct_scan])
         ct_scan = stack([ct_slice.pixel_array for ct_slice in ct_scan])
-        ct_scan[ct_scan == ct_scan.min()] = 0
+        ct_scan[ct_scan == -2000] = 0
         return ct_scan, heights
 
 
@@ -55,7 +55,7 @@ def get_pixels_hu(slices):
 
     # Set outside-of-scan pixels to 0
     # The intercept is usually -1024, so air is approximately 0
-    image[image == image.min()] = 0
+    image[image == -2000] = 0
 
     # Convert to Hounsfield units (HU)
     for slice_number in range(len(slices)):

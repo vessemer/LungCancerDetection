@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" promptOnRemoteOverwrite="CHECK_CONTENT" serverName="Phystech" createEmptyFolders="true" notifyRemoteChanges="true">
+    <serverData>
+      <paths name="Phystech">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Projects/Kaggle/DataScienceBowl2K17/I/LungCancerDetection" local="$PROJECT_DIR$" web="/Projects/Kaggle/DataScienceBowl2K17/I/LungCancerDetection" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
