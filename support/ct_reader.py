@@ -57,6 +57,7 @@ def get_pixels_hu(slices):
     # The intercept is usually -1024, so air is approximately 0
     image[image == image.min()] = 0
 
+
     # Convert to Hounsfield units (HU)
     for slice_number in range(len(slices)):
 

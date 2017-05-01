@@ -4,6 +4,7 @@ import numpy as np
 import warnings
 
 from keras.layers import merge, Input
+
 from keras.layers import Dense, Activation, Flatten, Dropout
 from keras.layers import Convolution3D, MaxPooling3D, ZeroPadding3D, AveragePooling3D, UpSampling3D
 from keras.layers import BatchNormalization
@@ -11,6 +12,7 @@ from keras.models import Model
 import keras.backend as K
 from keras.utils.layer_utils import convert_all_kernels_in_model
 from keras.utils.data_utils import get_file
+
 
 
 
@@ -26,6 +28,7 @@ def identity_block(input_tensor, kernel_size,
                       kernel_size,
                       border_mode='same', 
                       trainable=trainable)(x)
+
     x = BatchNormalization(axis=bn_axis)(x)
     x = Activation('relu')(x)
 
@@ -33,6 +36,7 @@ def identity_block(input_tensor, kernel_size,
                       kernel_size, 
                       kernel_size, 
                       kernel_size,
+
                       border_mode='same', 
                       trainable=trainable)(x)
     x = merge([x, input_tensor], mode='sum')
@@ -52,10 +56,12 @@ def conv_block(input_tensor, kernel_size,
                       subsample=stride,
                       border_mode='same', 
                       trainable=trainable)(x)
+
     
     x = BatchNormalization(axis=bn_axis)(x)
     x = Activation('relu')(x)
     
+
     x = Convolution3D(filters[1], 
                       kernel_size, 
                       kernel_size, 
@@ -91,10 +97,12 @@ def dim_concentration(out=(20, 40, 40, 1),
     x = Convolution3D(64, 5, 5, 5, 
                       subsample=(1, 1, 1),  
                       border_mode='same')(x)     
+
     x = BatchNormalization(axis=bn_axis)(x)
     x = Activation('relu')(x)
     x = MaxPooling3D((1, 2, 2))(x)
     
+
      
     #   shape:  32, 20, 20, 20
     x = conv_block(x, 3, [64, 64])
@@ -126,6 +134,7 @@ def dim_concentration(out=(20, 40, 40, 1),
     x = UpSampling3D((1, 2, 2))(x)
 
 #   shape:  1, 20, 40, 40
+
     x = Convolution3D(1, 3, 3, 3, subsample=(1, 1, 1),  border_mode='same')(x)
     x = BatchNormalization(axis=bn_axis)(x)
     x = Activation('sigmoid')(x)
