@@ -1,6 +1,9 @@
 PATH = {
     'DATA': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/TRAIN',
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1362926d9120cec3f7e15c0c2bfb790e6ac8f408
     'DATA_MXNET': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/TRAIN_MXNET',
     'DATA_OUT': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/TRAIN_OUT',
     'DATA_TRICKY': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/TRAIN_OUT/TRICKY_SLICES',
@@ -37,6 +40,7 @@ PATH = {
     'CHECKPOINTS': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data',
     'EVALUATION': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/I/LungCancerDetection/support/evaluationScript'
 }
+<<<<<<< HEAD
 =======
     'DATA_OUT': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/TRAIN_OUT',
     'CSV': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/CSV',
@@ -56,3 +60,5 @@ PATH = {
     'CHECKPOINTS': '/home/a.dobrenkii/Projects/Kaggle/DataScienceBowl2K17/data/'
 }
 >>>>>>> abdf3f2372416291547ffc320c65b0d6e432fe1e
+=======
+>>>>>>> 1362926d9120cec3f7e15c0c2bfb790e6ac8f408
