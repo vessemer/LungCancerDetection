@@ -91,12 +91,16 @@ def crop_and_rotate(segmenteds, left, right):
 
     x, y, z = where(left)
     if len(x):
-        segmenteds_left = segmenteds_left[x.min():x.max(), y.min():y.max(), z.min():z.max()]
+        segmenteds_left = segmenteds_left[x.min():x.max(), 
+                                          y.min():y.max(), 
+                                          z.min():z.max()]
     else:
         segmenteds_left = array([])
     x, y, z = where(right)
     if len(x):
-        segmenteds_right = segmenteds_right[x.min():x.max(), y.min():y.max(), z.min():z.max()]
+        segmenteds_right = segmenteds_right[x.min():x.max(), 
+                                            y.min():y.max(), 
+                                            z.min():z.max()]
     else:
         segmenteds_left = array([])
     return segmenteds_left, segmenteds_right
