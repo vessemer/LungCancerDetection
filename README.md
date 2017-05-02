@@ -19,3 +19,20 @@ performance metric (CPM) of 0.735 and sensitivities of 78.8% and 83.9% at 1 and
 4 false positives per scan, respectively. This study is also accompanied by detailed  
 descriptions and results overview in comparison with the state of the art solutions.
 
+
+### Prerequarements ###
+
+* Numpy, Scipy, Scikit-Image
+* SimpleITK, PyDICOM
+* Keras, TensorFlow >= 0.10, GPU supported
+
+
+### Contribution guidelines ###
+
+* Writing tests
+* Code review
+* Other guidelines
+
+### Who do I talk to? ###
+
+* a.dobrenkiy@innopolis.ru
