@@ -3,6 +3,21 @@ Pulmonary nodules detection plays a significant role in the early detection and 
 The dataset consists of 888 patient's chest volume low dose computer tomography (LDCT) scans, selected from publicly available LIDC-IDRI dataset. This dataset was marked by LUNA16 challenge organizers resulting in 1186 nodules. Trivial data augmentation and dropout were applied in order to avoid overfitting. Proposed method achieved high competition performance metric (CPM) of 0.735  and sensitivities of 78.8\% and 83.9\% at 1 and 4 false positives per scan, respectively.
 This study is also accompanied by detailed descriptions and results overview in comparison with the state of the art solutions.
 
+### Lungs Segmentation & junction propagation
+
+![Junction Propagation](https://habrastorage.org/webt/4y/ok/v8/4yokv81jwnr4nsfhmss-adcgkqo.png)
+
+
+### Network Architecture
+
+![Network Architecture](https://habrastorage.org/webt/bn/jn/jo/bnjnjoni6z6cgdpakkfjdb9xcbk.png)
+
+
+### FROC Perfomance
+
+![FROC](https://habrastorage.org/webt/yd/mz/qa/ydmzqam8dwwhkesur0tbyymtxqa.png)
+
+
 ### Prerequarements ###
 
 * Numpy, Scipy, Scikit-Image
